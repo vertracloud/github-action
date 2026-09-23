@@ -1,0 +1,64 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      restart:
+        description: Restart the test application after the upload
+        type: choice
+        options: ["true", "false"]
+        default: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint workflows
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+      - name: Validate action.yml
+        run: |
+          python3 - <<'PY'
+          import yaml
+          a = yaml.safe_load(open("action.yml"))
+          assert a["runs"]["using"] == "composite", a["runs"]
+          assert set(a["inputs"]) == {"api-key", "app-id", "path", "restart", "cli-version"}, a["inputs"]
+          assert "outputs" not in a
+          action = open("action.yml").read()
+          assert "npx" not in action
+          assert "deploy.sh" in action
+          PY
+
+      - name: Test mocked release download and deploy invocation
+        run: bash test.sh
+
+  # Real deploy to a throwaway app. Manual only; needs the secrets below.
+  integration:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secrets
+        env:
+          HAS_KEY: ${{ secrets.VERTRA_TEST_API_KEY != '' }}
+          HAS_APP: ${{ secrets.VERTRA_TEST_APP_ID != '' }}
+        run: |
+          [ "$HAS_KEY" = true ] || { echo "::error::Missing secret VERTRA_TEST_API_KEY."; exit 1; }
+          [ "$HAS_APP" = true ] || { echo "::error::Missing secret VERTRA_TEST_APP_ID."; exit 1; }
+
+      - uses: ./
+        with:
+          api-key: ${{ secrets.VERTRA_TEST_API_KEY }}
+          app-id: ${{ secrets.VERTRA_TEST_APP_ID }}
+          restart: ${{ inputs.restart }}
