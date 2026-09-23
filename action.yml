@@ -1,0 +1,39 @@
+name: Vertra Cloud Deploy
+description: Deploy your repository to an existing Vertra Cloud application using the official CLI.
+author: Vertra Cloud
+branding:
+  icon: upload-cloud
+  color: orange
+
+inputs:
+  api-key:
+    description: Vertra Cloud API key. Always pass it from a GitHub secret.
+    required: true
+  app-id:
+    description: ID of the existing application to update.
+    required: true
+  path:
+    description: Project directory to upload, relative to the repository root.
+    required: false
+    default: "."
+  restart:
+    description: Restart the application after the upload ("true" or "false").
+    required: false
+    default: "true"
+  cli-version:
+    description: Vertra CLI release tag to use, e.g. v0.1.0.
+    required: false
+    default: "v0.1.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Deploy
+      shell: bash
+      env:
+        VERTRA_API_KEY: ${{ inputs.api-key }}
+        VERTRA_APP_ID: ${{ inputs.app-id }}
+        VERTRA_RESTART: ${{ inputs.restart }}
+        VERTRA_CLI_VERSION: ${{ inputs.cli-version }}
+        VERTRA_PROJECT_PATH: ${{ inputs.path }}
+      run: bash "$GITHUB_ACTION_PATH/deploy.sh"
