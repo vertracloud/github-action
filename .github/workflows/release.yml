@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # Keep the major tag (v1) on the latest release so `@v1` picks it up.
+      - if: ${{ steps.rp.outputs.release_created }}
+        uses: actions/checkout@v4
+      - if: ${{ steps.rp.outputs.release_created }}
+        run: |
+          git tag -f "v${{ steps.rp.outputs.major }}" "${{ steps.rp.outputs.tag_name }}"
+          git push -f origin "v${{ steps.rp.outputs.major }}"
