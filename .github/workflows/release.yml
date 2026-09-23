@@ -23,5 +23,5 @@ jobs:
         uses: actions/checkout@v4
       - if: ${{ steps.rp.outputs.release_created }}
         run: |
-          git tag -f "v${{ steps.rp.outputs.major }}" "${{ steps.rp.outputs.tag_name }}"
+          git tag -f "v${{ steps.rp.outputs.major }}" "${{ steps.rp.outputs.sha }}"
           git push -f origin "v${{ steps.rp.outputs.major }}"
