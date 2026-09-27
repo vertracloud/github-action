@@ -10,17 +10,17 @@ permissions:
 
 jobs:
   release-please:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - id: rp
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
       # Keep the major tag (v1) on the latest release so `@v1` picks it up.
       - if: ${{ steps.rp.outputs.release_created }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - if: ${{ steps.rp.outputs.release_created }}
         run: |
           git tag -f "v${{ steps.rp.outputs.major }}" "${{ steps.rp.outputs.sha }}"
