@@ -65,7 +65,7 @@ Never write the API key in the workflow file. The Action also masks it in the lo
 | `app-id` | yes | — | ID of the existing application. |
 | `path` | no | `.` | Directory to upload, relative to the repository root. |
 | `restart` | no | `true` | Restart the application after the upload. |
-| `cli-version` | no | `v0.1.0` | Vertra CLI release tag to use. |
+| `cli-version` | no | `v0.1.2` | Vertra CLI release tag to use. |
 
 The Action has no outputs: the step succeeds when the deploy succeeds and fails otherwise.
 
