@@ -23,7 +23,7 @@ inputs:
   cli-version:
     description: Vertra CLI release tag to use, e.g. v0.1.0.
     required: false
-    default: "v0.1.2"
+    default: "v0.1.3"
 
 runs:
   using: composite
