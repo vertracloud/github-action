@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/vertracloud/github-action/compare/v1.0.3...v1.0.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* default to Vertra CLI v0.3.0 ([24ff30a](https://github.com/vertracloud/github-action/commit/24ff30aedec6b876a221f68f67e2ceba3d07907a))
+
 ## [1.0.3](https://github.com/vertracloud/github-action/compare/v1.0.2...v1.0.3) (2026-10-12)
 
 
