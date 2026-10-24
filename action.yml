@@ -10,10 +10,15 @@ inputs:
     description: Vertra Cloud API key. Always pass it from a GitHub secret.
     required: true
   app-id:
-    description: ID of the existing application to update.
-    required: true
+    description: ID of the existing application to update. Use this or image-id, not both.
+    required: false
+    default: ""
+  image-id:
+    description: ID of the Docker image to rebuild from the directory (needs a Dockerfile at its root). Use this or app-id, not both. Apps of the image do not restart on their own.
+    required: false
+    default: ""
   path:
-    description: Project directory to upload, relative to the repository root.
+    description: Project directory to upload, relative to the repository root. With image-id it is the build context; .dockerignore is honored and .env files are never sent.
     required: false
     default: "."
   restart:
@@ -33,6 +38,7 @@ runs:
       env:
         VERTRA_API_KEY: ${{ inputs.api-key }}
         VERTRA_APP_ID: ${{ inputs.app-id }}
+        VERTRA_IMAGE_ID: ${{ inputs.image-id }}
         VERTRA_RESTART: ${{ inputs.restart }}
         VERTRA_CLI_VERSION: ${{ inputs.cli-version }}
         VERTRA_PROJECT_PATH: ${{ inputs.path }}

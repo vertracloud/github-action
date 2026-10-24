@@ -32,6 +32,20 @@ VERTRA_RESTART=true bash "$root/deploy.sh"
 VERTRA_RESTART=false RUNNER_ARCH=ARM64 bash "$root/deploy.sh"
 [[ "$(cat "$tmp/cli.log")" == "$tmp/project"$'\n''deploy app-123 --json' ]]
 
+# image-id alone rebuilds the image from the folder; the restart input does not apply.
+VERTRA_APP_ID= VERTRA_IMAGE_ID=img-456 VERTRA_RESTART=true bash "$root/deploy.sh"
+[[ "$(tail -n 1 "$tmp/cli.log")" == "image rebuild img-456 --context $tmp/project --json" ]]
+
+# app-id and image-id together are an error, and so is neither of them.
+if VERTRA_IMAGE_ID=img-456 bash "$root/deploy.sh" >/dev/null 2>&1; then
+  echo "app-id and image-id together were accepted" >&2
+  exit 1
+fi
+if VERTRA_APP_ID= VERTRA_IMAGE_ID= bash "$root/deploy.sh" >/dev/null 2>&1; then
+  echo "missing app-id and image-id was accepted" >&2
+  exit 1
+fi
+
 if VERTRA_RESTART=maybe bash "$root/deploy.sh" >/dev/null 2>&1; then
   echo "invalid restart was accepted" >&2
   exit 1

@@ -6,8 +6,12 @@ if [[ -z "${VERTRA_API_KEY:-}" ]]; then
   exit 1
 fi
 echo "::add-mask::$VERTRA_API_KEY"
-if [[ -z "${VERTRA_APP_ID:-}" ]]; then
-  echo "::error::The 'app-id' input is required."
+if [[ -n "${VERTRA_APP_ID:-}" && -n "${VERTRA_IMAGE_ID:-}" ]]; then
+  echo "::error::Use either 'app-id' or 'image-id', not both."
+  exit 1
+fi
+if [[ -z "${VERTRA_APP_ID:-}" && -z "${VERTRA_IMAGE_ID:-}" ]]; then
+  echo "::error::One of the 'app-id' or 'image-id' inputs is required."
   exit 1
 fi
 if [[ ! "${VERTRA_CLI_VERSION:-}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][A-Za-z0-9.-]+)?$ ]]; then
@@ -64,6 +68,12 @@ if [[ ! -f "$tmp_dir/vertra" ]]; then
   exit 1
 fi
 chmod +x "$tmp_dir/vertra"
+if [[ -n "${VERTRA_IMAGE_ID:-}" ]]; then
+  # Docker image: the folder is packed (honoring .dockerignore, never sending .env*)
+  # and the image is rebuilt. Apps never restart on their own, so 'restart' does not apply.
+  "$tmp_dir/vertra" image rebuild "$VERTRA_IMAGE_ID" --context "${VERTRA_PROJECT_PATH:-.}" --json
+  exit 0
+fi
 cd "${VERTRA_PROJECT_PATH:-.}"
 if [[ "$restart" == true ]]; then
   "$tmp_dir/vertra" deploy "$VERTRA_APP_ID" --json --restart
