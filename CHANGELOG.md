@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/vertracloud/github-action/compare/v1.0.5...v1.1.0) (2026-10-25)
+
+
+### Features
+
+* add image-id input to rebuild a custom image ([74a036d](https://github.com/vertracloud/github-action/commit/74a036db1c98aa567a95e622dbafcc712156f292))
+
 ## [1.0.5](https://github.com/vertracloud/github-action/compare/v1.0.4...v1.0.5) (2026-10-22)
 
 
