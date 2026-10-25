@@ -3,3 +3,6 @@ AGENTS.md
 AGENT.md
 CLAUDE.md
 .claude/
+
+# Segredos locais nunca entram no repositório público.
+.env*
